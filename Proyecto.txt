@@ -1,0 +1,182 @@
+create database Inventario_PY_Final;
+use Inventario_PY_Final;
+
+/*******************************************************/
+/*Prestamos*/
+create table Prestamos(
+	idPrestamos INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+	fechaInicioPrestamo DATE NULL,
+	fechaFinalPrestamo DATE NULL,
+	primary key (idPrestamos)
+);
+/*******************************************************/
+
+/*******************************************************/
+/*Rol*/
+create table Rol(
+	idRol  INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+	tipoRol varchar (30),
+    primary key (idRol)
+);
+/*******************************************************/
+
+/*******************************************************/
+/*Ubicacion*/
+create table Ubicacion(
+	idUbicacion INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+	idAmbiente INTEGER (30),
+    sedeUbicacion varchar (50),
+    Activo_idActivo INTEGER UNSIGNED NOT NULL,
+    primary key (idUbicacion)
+);
+/*******************************************************/
+
+/*******************************************************/
+/*Categoria*/
+create table Categoria(
+	idCategoria INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    nombreCategoria varchar (50),
+    descripcionCategoria varchar (100),
+    primary key (idCategoria)
+);
+/*******************************************************/
+
+/*******************************************************/
+/*Orden*/
+create table Orden(
+	idOrden INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+	fechaInicioOrden DATE NULL,
+	fechaFinalOrden DATE NULL,
+	detallesOrden VARCHAR (50) NULL,
+	Prestamos_idPrestamo INTEGER unsigned NOT NULL,
+	PRIMARY KEY (idOrden),
+		INDEX Orden_FKIndex1(Prestamos_idPrestamo),
+		FOREIGN KEY (Prestamos_idPrestamo)
+			REFERENCES Prestamos(idPrestamos)
+			 ON DELETE NO ACTION 
+			 ON UPDATE NO ACTION 
+);
+/*******************************************************/
+
+/*******************************************************/
+/*OrdenActivo*/
+create table OrdenActivo (
+	idOrdenActivo INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+	fechaCompraEstado Date NULL,
+	descripcionEstado varchar (150),
+	Orden_idOrden Integer unsigned NOT NULL,
+	primary key (idOrdenActivo),
+		INDEX OrdenActivo_FKIndex1(Orden_idOrden),
+		foreign key (Orden_idOrden)
+			references Orden(idOrden)	
+				ON DELETE NO ACTION 
+				ON UPDATE NO ACTION 
+);
+/*******************************************************/
+
+/*******************************************************/
+/*Activo*/
+create table Activo(
+		idActivo INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, 
+		nombreActivo varchar (40) not null,
+		marcaActivo varchar (40) not null,
+		imagenActivo mediumblob null,
+		OrdenActivo_idOrdenActivo INTEGER unsigned NOT NULL,
+		Categoria_idCategoria INTEGER unsigned NOT NULL,
+		PRIMARY KEY (idActivo),
+			INDEX OrdenActivo_FKIndex1(OrdenActivo_idOrdenActivo),
+			INDEX Categoria_FKIndex2(Categoria_idCategoria),
+			foreign key (OrdenActivo_idOrdenActivo)
+				references OrdenActivo(idOrdenActivo)	
+						ON DELETE NO ACTION 
+						ON UPDATE NO ACTION, 
+			foreign key (Categoria_idCategoria)
+				references Categoria(idCategoria)	
+						ON DELETE NO ACTION 
+						ON UPDATE NO ACTION 
+);
+/*******************************************************/
+
+/*******************************************************/
+/*Persona*/
+create table Persona(
+		idPersona INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+		numeroDocumentoPersona INTEGER NOT NULL,
+		nombrePersona varchar (30) NOT NULL,
+		apellidoPersona varchar (30) NOT NULL, 
+		emailPersona varchar (30) NOT NULL,
+		celularPersona bigint (14) NOT NULL,
+		telefonoPersona bigint (14) NULL,
+		primary key (idPersona),
+		Rol_idRol INTEGER unsigned NOT NULL,
+		Ubicacion_idUbicacion INTEGER UNSIGNED NOT NULL,
+			INDEX Rol_FKIndex1(Rol_idRol),
+			INDEX Ubicacion_FKIndex(Ubicacion_idUbicacion),
+			foreign key (Rol_idRol)
+						references Rol(idRol)	
+									ON DELETE NO ACTION 
+									ON UPDATE NO ACTION, 
+			foreign key (Ubicacion_idUbicacion)
+						references Ubicacion(idUbicacion)	
+									ON DELETE NO ACTION 
+									ON UPDATE NO ACTION 
+
+);
+/*******************************************************/
+
+
+/*******************************************************/
+/*Rol*/
+Insert into Rol (idRol, tipoRol) values (1,'Cliente');
+Insert into Rol (idRol, tipoRol) values (2,'Empleado');
+/*******************************************************/
+
+/******************************************************************************************************************/
+/*Prestamos*/
+Insert into Prestamos (idPrestamos, fechaInicioPrestamo, fechaFinalPrestamo) values (1,'2020-02-20','2020-03-20');
+Insert into Prestamos (idPrestamos, fechaInicioPrestamo, fechaFinalPrestamo) values (2,'2020-04-21','2020-04-22');
+Insert into Prestamos (idPrestamos, fechaInicioPrestamo, fechaFinalPrestamo) values (3,'2020-04-23','2020-04-24');
+Insert into Prestamos (idPrestamos, fechaInicioPrestamo, fechaFinalPrestamo) values (4,'2020-04-25','2020-04-26');
+/******************************************************************************************************************/
+
+/******************************************************************************************************************/
+/*Ubicacion*/
+Insert into Ubicacion (idUbicacion, idAmbiente, sedeUbicacion, Activo_idActivo) values (1,100, 'SEDE COLOMBIA', 1);
+Insert into Ubicacion (idUbicacion, idAmbiente, sedeUbicacion, Activo_idActivo) values (2,101, 'SEDE COLOMBIA', 2);
+Insert into Ubicacion (idUbicacion, idAmbiente, sedeUbicacion, Activo_idActivo) values (3,102, 'SEDE COLOMBIA', 1);
+Insert into Ubicacion (idUbicacion, idAmbiente, sedeUbicacion, Activo_idActivo) values (4,103, 'SEDE COLOMBIA', 2);
+/******************************************************************************************************************/
+
+/***********************************************************************************************************************************/
+/*Categoria*/
+Insert into Categoria (idCategoria, nombreCategoria, descripcionCategoria) values (1,'Computadores de mesa','Computadores Completos');
+Insert into Categoria (idCategoria, nombreCategoria, descripcionCategoria) values (2,'Portatiles','Computadores Completos');
+/***********************************************************************************************************************************/
+
+/********************************************************************************************************************************************************************************/
+/*Orden*/
+Insert into Orden (idOrden, fechaInicioOrden, fechaFinalOrden, detallesOrden, Prestamos_idPrestamo) values (1, '2020-04-25', '2020-04-26', 'Comutador Portatil Completo', 1);
+Insert into Orden (idOrden, fechaInicioOrden, fechaFinalOrden, detallesOrden, Prestamos_idPrestamo) values (2, '2020-04-26', '2020-04-27', 'Comutador Mesa Completo', 2);
+Insert into Orden (idOrden, fechaInicioOrden, fechaFinalOrden, detallesOrden, Prestamos_idPrestamo) values (3, '2020-04-28', '2020-04-28', 'Comutador Portatil Completo', 3);
+/********************************************************************************************************************************************************************************/
+
+/************************************************************************************************************************************/
+/*OrdenActivo*/
+Insert into OrdenActivo (idOrdenActivo, fechaCompraEstado, descripcionEstado, Orden_idOrden) values (1,'2020-02-20','Ninguna',1);
+Insert into OrdenActivo (idOrdenActivo, fechaCompraEstado, descripcionEstado, Orden_idOrden) values (2,'2020-03-20','Ninguna',2);
+Insert into OrdenActivo (idOrdenActivo, fechaCompraEstado, descripcionEstado, Orden_idOrden) values (3,'2020-02-22','Ninguna',3);
+/************************************************************************************************************************************/
+
+/********************************************************************************************************************************************************************/
+/*Activo*/
+Insert into Activo (idActivo, nombreActivo, marcaActivo, imagenActivo, OrdenActivo_idOrdenActivo, Categoria_idCategoria) values (1, 'Talian', 'Azus', 'Ninguna',1,1);
+Insert into Activo (idActivo, nombreActivo, marcaActivo, imagenActivo, OrdenActivo_idOrdenActivo, Categoria_idCategoria) values (2, 'Pavilion', 'HP', 'Ninguna',2,2);
+Insert into Activo (idActivo, nombreActivo, marcaActivo, imagenActivo, OrdenActivo_idOrdenActivo, Categoria_idCategoria) values (3, 'Tarlian', 'Azus', 'Ninguna',1,2);
+/********************************************************************************************************************************************************************/
+
+/****************************************************************************************************************************************************************************************************************************************************************/
+/*Persona*/
+Insert into Persona (idPersona, numeroDocumentoPersona, nombrePersona, apellidoPersona, emailPersona, celularPersona, telefonoPersona,Rol_idRol,Ubicacion_idUbicacion) values (1,10000352, 'Santiago', 'Ramirez','Santiago@gmail.com', 316554485, 56983545,1,1);
+Insert into Persona (idPersona, numeroDocumentoPersona, nombrePersona, apellidoPersona, emailPersona, celularPersona, telefonoPersona,Rol_idRol,Ubicacion_idUbicacion) values (2,10563252, 'Fabian', 'Parra','Fabian@gmail.com', 316555925, 385916516,1,2);
+Insert into Persona (idPersona, numeroDocumentoPersona, nombrePersona, apellidoPersona, emailPersona, celularPersona, telefonoPersona,Rol_idRol,Ubicacion_idUbicacion) values (3,10256265, 'Brayan', 'Ramirez','Brayan@gmail.com', 54126351, 165651003,2,3);
+/****************************************************************************************************************************************************************************************************************************************************************/
